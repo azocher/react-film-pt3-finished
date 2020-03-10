@@ -1,35 +1,35 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import FilmListing from './FilmListing';
 import FilmDetails from './FilmDetails';
 import TMDB from './TMDB';
 
 
-class App extends Component {
-  constructor(){
-    super()
-    this.state = {
-      films: TMDB.films,
-      current: {}
-    }
+function App() {
+  const [films, setFilms] = useState(TMDB.films);
+  const [current, setCurrent] = useState({});
+
+  let handleDetailsClick = (film) => {
+    console.log(film.id);
+    console.log(TMDB);
+    const url = `https://api.themoviedb.org/3/movie/${film.id}?api_key=${TMDB.api_key}&language=en`;
+    fetch(url)
+      .then(response => response.json())
+      .then(json => setCurrent(json))
+      .catch(err => console.log(`Error: ${err}`));
   }
 
-  handleDetailsClick = (film) => {
-    console.log("Fetching details for", film.title);
-  }
-
-  render() {
     return (
       <div className="App">
         <div className="film-library">
-          <FilmListing films={this.state.films} 
-          handleDetailsClick={this.handleDetailsClick}
+          <FilmListing films={films} 
+          handleDetailsClick={handleDetailsClick}
           />
-          <FilmDetails film={this.state.current}/>
+          <FilmDetails film={current}/>
         </div>
       </div>
     );
-  }
+
 }
 
 export default App;
